@@ -68,6 +68,8 @@ pub enum Model {
 
     #[serde(rename = "zai-glm-latest", alias = "zai-glm-latest")]
     ZaiGlmLatest,
+    #[serde(rename = "zai-glm-5-2", alias = "zai-glm-5-2")]
+    ZaiGlm5_2,
 
     #[serde(rename = "custom")]
     Custom {
@@ -98,6 +100,7 @@ impl Model {
             "ministral-8b-latest" => Ok(Self::Ministral8bLatest),
             "ministral-14b-latest" => Ok(Self::Ministral14bLatest),
             "zai-glm-latest" => Ok(Self::ZaiGlmLatest),
+            "zai-glm-5-2" => Ok(Self::ZaiGlm5_2),
             invalid_id => anyhow::bail!("invalid model id '{invalid_id}'"),
         }
     }
@@ -112,6 +115,7 @@ impl Model {
             Self::Ministral8bLatest => "ministral-8b-latest",
             Self::Ministral14bLatest => "ministral-14b-latest",
             Self::ZaiGlmLatest => "zai-glm-latest",
+            Self::ZaiGlm5_2 => "zai-glm-5-2",
             Self::Custom { name, .. } => name,
         }
     }
@@ -126,6 +130,7 @@ impl Model {
             Self::Ministral8bLatest => "ministral-8b-latest",
             Self::Ministral14bLatest => "ministral-14b-latest",
             Self::ZaiGlmLatest => "zai-glm-latest",
+            Self::ZaiGlm5_2 => "zai-glm-5-2",
             Self::Custom {
                 name, display_name, ..
             } => display_name.as_ref().unwrap_or(name),
@@ -142,6 +147,7 @@ impl Model {
             Self::Ministral8bLatest => 256000,
             Self::Ministral14bLatest => 256000,
             Self::ZaiGlmLatest => 1_048_576,
+            Self::ZaiGlm5_2 => 131072,
             Self::Custom { max_tokens, .. } => *max_tokens,
         }
     }
@@ -164,7 +170,8 @@ impl Model {
             | Self::Ministral3bLatest
             | Self::Ministral8bLatest
             | Self::Ministral14bLatest
-            | Self::ZaiGlmLatest => true,
+            | Self::ZaiGlmLatest
+            | Self::ZaiGlm5_2 => true,
             Self::Custom { supports_tools, .. } => supports_tools.unwrap_or(false),
         }
     }
@@ -176,7 +183,8 @@ impl Model {
             | Self::MistralSmallLatest
             | Self::Ministral3bLatest
             | Self::Ministral8bLatest
-            | Self::Ministral14bLatest => true,
+            | Self::Ministral14bLatest
+            | Self::ZaiGlm5_2 => true,
             Self::CodestralLatest | Self::ZaiGlmLatest => false,
             Self::Custom {
                 supports_images, ..
@@ -186,7 +194,8 @@ impl Model {
 
     pub fn supports_thinking(&self) -> bool {
         match self {
-            Self::MistralMediumLatest | Self::MistralSmallLatest | Self::ZaiGlmLatest => true,
+            Self::MistralMediumLatest | Self::MistralSmallLatest | Self::ZaiGlmLatest
+            | Self::ZaiGlm5_2 => true,
             Self::Custom {
                 supports_thinking, ..
             } => supports_thinking.unwrap_or(false),
